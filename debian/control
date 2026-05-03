@@ -1,7 +1,7 @@
 Source: ani-pull
 Section: utils
 Priority: optional
-Maintainer: Smasduq <smasduq@example.com>
+Maintainer: Smasduq <smasduqacc@gmail.com>
 Build-Depends: debhelper-compat (= 13),
                dh-python,
                pybuild-plugin-pyproject,

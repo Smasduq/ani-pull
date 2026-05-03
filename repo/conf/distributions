@@ -1,0 +1,44 @@
+Origin: Smasduq
+Label: Ani-Pull Repository
+Codename: bookworm
+Suite: stable
+Architectures: all
+Components: main
+Description: Ani-Pull for Debian Bookworm (12)
+SignWith: ed25519/621133CE7B76F04C
+
+Origin: Smasduq
+Label: Ani-Pull Repository
+Codename: bullseye
+Suite: oldstable
+Architectures: all
+Components: main
+Description: Ani-Pull for Debian Bullseye (11)
+SignWith: ed25519/621133CE7B76F04C
+
+Origin: Smasduq
+Label: Ani-Pull Repository
+Codename: trixie
+Suite: testing
+Architectures: all
+Components: main
+Description: Ani-Pull for Debian Trixie (13)
+SignWith: ed25519/621133CE7B76F04C
+
+Origin: Smasduq
+Label: Ani-Pull Repository
+Codename: jammy
+Suite: stable
+Architectures: all
+Components: main
+Description: Ani-Pull for Ubuntu Jammy (22.04)
+SignWith: ed25519/621133CE7B76F04C
+
+Origin: Smasduq
+Label: Ani-Pull Repository
+Codename: noble
+Suite: stable
+Architectures: all
+Components: main
+Description: Ani-Pull for Ubuntu Noble (24.04)
+SignWith: ed25519/621133CE7B76F04C

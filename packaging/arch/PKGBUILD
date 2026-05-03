@@ -1,0 +1,21 @@
+pkgname=ani-pull
+pkgver=1.1.0
+pkgrel=1
+pkgdesc="Anime downloader CLI"
+arch=('any')
+url="https://github.com/Smasduq/ani-pull"
+license=('MIT')
+depends=('python' 'python-requests' 'python-beautifulsoup4' 'yt-dlp' 'python-rich' 'python-cloudscraper' 'python-tqdm')
+makedepends=('python-build' 'python-installer' 'python-setuptools' 'python-wheel')
+source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+    cd "ani-pull-$pkgver"
+    python3 -m build --wheel --no-isolation --skip-dependency-check
+}
+
+package() {
+    cd "ani-pull-$pkgver"
+    python3 -m installer --destdir="$pkgdir" dist/*.whl
+}
