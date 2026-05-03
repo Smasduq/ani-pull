@@ -1,4 +1,4 @@
-# Anime Downloader CLI
+# Anime Downloader CLI (ani-pull)
 
 A robust, user-friendly CLI for searching and downloading anime episodes.
 
@@ -7,38 +7,68 @@ A robust, user-friendly CLI for searching and downloading anime episodes.
 - Select specific episodes or ranges
 - High-quality downloads using **yt-dlp**
 - Progress tracking with speed and ETA
-- Automatically bypasses site protections
-
-## Requirements
-- **Python 3.8+**
-- **FFmpeg** (Required for merging video streams)
-- Dependencies: `requests`, `beautifulsoup4`, `yt-dlp`, `tqdm`
+- Native support for **Debian, Ubuntu, Fedora, and Arch Linux**
 
 ## Installation
-1. Clone the repository.
-2. Create a virtual environment and install dependencies:
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   pip install -r requirements.txt
-   ```
+
+### 🐧 Debian / Ubuntu
+Download the latest `.deb` file from the [Releases](https://github.com/Smasduq/ani-pull/releases) page and run:
+```bash
+sudo apt install ./ani-pull_*.deb
+```
+
+### 🎩 Fedora
+Download the latest `.rpm` or build from source:
+```bash
+sudo dnf install ./ani-pull-*.rpm
+```
+
+### 🏹 Arch Linux
+Build using the PKGBUILD:
+```bash
+cd packaging/arch
+makepkg -si
+```
+
+### 🐍 Python (Standard)
+```bash
+pip install .
+```
 
 ## Usage
-Run the main script:
+After installation, simply run:
 ```bash
-python3 main.py
+ani-pull
 ```
 
 Follow the interactive prompts:
 1. Enter the anime name.
 2. Select the anime from the search results.
 3. Choose the episode range (e.g., `1`, `1-5`, or `all`).
-4. Watch the progress as it downloads!
+4. Select resolution and confirm download.
 
-## Technical Notes
-- Built using a robust scraper for **Anitaku.to**.
-- Leverages **yt-dlp**'s internal extractors for streaming players like Vidstreaming and Doodstream.
-- Uses **requests** with custom headers for reliable scraping.
+## Development
+
+### Requirements
+- **Python 3.8+**
+- **FFmpeg** (Required for merging video streams)
+
+### Setup
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+```
+
+### Testing
+```bash
+pytest tests/
+```
+
+### Building Debian Package Locally
+```bash
+./release.sh
+```
 
 ## Disclaimer
 This tool is for educational purposes only. Please support the official creators and distributors of the anime you watch.

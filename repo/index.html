@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ani-Pull APT Repository</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 20px; background: #f4f4f9; }
+        h1 { color: #2c3e50; }
+        code { background: #eee; padding: 2px 5px; border-radius: 3px; }
+        .box { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>Ani-Pull APT Repository</h1>
+        <p>Welcome to the official APT repository for <strong>ani-pull</strong>.</p>
+        
+        <h2>How to add this repository:</h2>
+        <ol>
+            <li>Install the GPG key:<br>
+                <code>wget -qO - https://smasduq.github.io/ani-pull/repo/key.gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/ani-pull.gpg</code>
+            </li>
+            <li>Add the source:<br>
+                <code>echo "deb https://smasduq.github.io/ani-pull/repo/ bookworm main" | sudo tee /etc/apt/sources.list.d/ani-pull.list</code>
+            </li>
+            <li>Install:<br>
+                <code>sudo apt update && sudo apt install ani-pull</code>
+            </li>
+        </ol>
+        <p>Supported distributions: <em>bookworm, bullseye, trixie, jammy, noble</em></p>
+    </div>
+</body>
+</html>
