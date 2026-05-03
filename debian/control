@@ -1,0 +1,25 @@
+Source: ani-pull
+Section: utils
+Priority: optional
+Maintainer: Smasduq <smasduq@example.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               pybuild-plugin-pyproject,
+               python3-all,
+               python3-setuptools,
+               python3-requests,
+               python3-bs4,
+               python3-rich,
+               python3-cloudscraper,
+               python3-tqdm
+Standards-Version: 4.6.2
+Homepage: https://github.com/Smasduq/ani-pull
+
+Package: ani-pull
+Architecture: all
+Depends: ${python3:Depends},
+         ${misc:Depends},
+         yt-dlp
+Description: Anime downloader CLI
+ A reliable and maintainable anime downloader CLI that searches, selects,
+ and downloads high-quality anime episodes from Anitaku.to.

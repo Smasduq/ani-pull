@@ -1,181 +1,167 @@
-#!/usr/bin/env python3
-"""
-Anime Downloader CLI - Interactive anime search and download tool
-"""
-from AnimepaheAPI.animepahe import AnimepaheAPI
-import json
+import os
 import sys
+import logging
+from typing import List, Dict, Any, Optional
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich.prompt import Prompt, IntPrompt
 
+from api.consumet import ConsumetAPI
+from api.downloader import Downloader, RichProgressHook
 
-def print_banner():
-    print("=" * 50)
-    print("       Anime Downloader - Animepahe CLI")
-    print("=" * 50)
-    print()
+# Configure logging
+logging.basicConfig(
+    level=logging.WARNING,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.FileHandler("app.log"), logging.StreamHandler(sys.stdout)]
+)
+# Disable most logs for the CLI
+logging.getLogger("yt_dlp").setLevel(logging.ERROR)
+logging.getLogger("requests").setLevel(logging.ERROR)
+logging.getLogger("urllib3").setLevel(logging.ERROR)
 
+console = Console()
 
-def print_anime_list(results):
-    """Display search results in a formatted way"""
-    print("\n📺 Search Results:")
-    print("-" * 50)
-    for i, anime in enumerate(results, 1):
-        title = anime.get('title', 'Unknown')
-        anime_type = anime.get('type', 'N/A')
-        episodes = anime.get('episodes', 'N/A')
-        status = anime.get('status', 'N/A')
-        score = anime.get('score', 'N/A')
-        season = anime.get('season', '')
-        year = anime.get('year', '')
-        
-        print(f"{i}. {title}")
-        print(f"   Type: {anime_type} | Episodes: {episodes} | Status: {status}")
-        print(f"   Season: {season} {year} | Score: {score}")
-        print()
-
-
-def print_episode_info(release_data):
-    """Display episode information"""
-    result = release_data.get('result', {})
-    print(f"\n🎬 Episode {result.get('episode', 'N/A')}")
-    print("-" * 30)
-    print(f"   Duration: {result.get('duration', 'N/A')} minutes")
-    print(f"   Session ID: {result.get('session', 'N/A')}")
-    print()
-
-
-def print_download_options(download_data):
-    """Display available download qualities"""
-    results = download_data.get('results', [])
-    print("\n📥 Available Downloads:")
-    print("-" * 50)
-    for i, option in enumerate(results, 1):
-        quality = option.get('quality', 'N/A')
-        size = option.get('size', 'N/A')
-        audio = option.get('audio', 'N/A')
-        url = option.get('url', 'N/A')
-        
-        print(f"{i}. Quality: {quality} | Size: {size} | Audio: {audio}")
-        if url:
-            print(f"   URL: {url[:80]}..." if len(url) > 80 else f"   URL: {url}")
-        else:
-            print(f"   URL: Not available")
-        print()
-
-
-def get_user_choice(max_options, prompt="Enter your choice"):
-    """Get a valid user choice from menu"""
-    while True:
-        try:
-            choice = input(f"{prompt} (1-{max_options}) or 'q' to quit: ").strip()
-            if choice.lower() == 'q':
-                return None
-            choice_num = int(choice)
-            if 1 <= choice_num <= max_options:
-                return choice_num
-            else:
-                print(f"❌ Please enter a number between 1 and {max_options}")
-        except ValueError:
-            print("❌ Invalid input. Please enter a number.")
-
-
-def print_episode_list(anime_title, release_data, total_episodes):
-    """Display list of available episodes"""
-    print(f"\n📋 Episodes for: {anime_title}")
-    print("-" * 50)
-    print(f"Total Episodes: {total_episodes}")
-    print("-" * 50)
-    
-    result = release_data.get('result', {})
-    episode = result.get('episode', 'N/A')
-    duration = result.get('duration', 'N/A')
-    print(f"1. Episode {episode} (Duration: {duration} min) - Most recent")
-    print(f"\n💡 Use option 1 to get the latest episode, or modify the code to fetch specific episodes.")
-
+def get_videos_dir():
+    """Get the user's Videos/Anime directory."""
+    home = os.path.expanduser("~")
+    videos_dir = os.path.join(home, "Videos", "Anime")
+    if not os.path.exists(videos_dir):
+        os.makedirs(videos_dir, exist_ok=True)
+    return videos_dir
 
 def main():
-    print_banner()
+    console.print(Panel.fit("ANIME DOWNLOADER", style="bold cyan", border_style="blue"))
     
-    # Initialize API
-    animepahe = AnimepaheAPI()
+    api = ConsumetAPI()
+    downloader = Downloader()
     
-    # Step 1: Search for anime
-    search_query = input("🔍 What anime would you like to search for? ").strip()
-    
-    if not search_query:
-        print("❌ Search query cannot be empty.")
-        return
-    
-    print(f"\n⏳ Searching for '{search_query}'...")
-    
-    try:
-        results = animepahe.search(search_query)
-        
-        if not results:
-            print("❌ No results found. Try a different search term.")
-            return
-        
-        print_anime_list(results)
-        
-        # Step 2: Select anime
-        choice = get_user_choice(len(results), "Select an anime")
-        
-        if choice is None:
-            print("👋 Goodbye!")
-            return
-        
-        selected_anime = results[choice - 1]
-        anime_id = selected_anime['id']
-        anime_title = selected_anime['title']
-        total_episodes = selected_anime.get('episodes', 'Unknown')
-        
-        print(f"\n✅ You selected: {anime_title}")
-        
-        # Step 3: Get episodes (using session from search result)
-        session = selected_anime.get('session')
-        
-        if not session:
-            print("❌ No session available for this anime.")
-            return
-        
-        # Get first episode to see total count
-        print(f"\n⏳ Fetching episode information for {anime_title}...")
-        release_data = animepahe.get_release(str(anime_id), episode=1)
-        
-        if release_data.get('success'):
-            print_episode_list(anime_title, release_data, total_episodes)
-            
-            # Step 4: Get download links for episode 1
-            episode_session = release_data['result'].get('session')
-            
-            if episode_session:
-                print("\n⏳ Fetching download links for latest episode...")
-                download_data = animepahe.get_download_links(episode_session)
-                
-                if download_data.get('success'):
-                    print_download_options(download_data)
-                    
-                    # Step 5: Offer to download
-                    results_list = download_data.get('results', [])
-                    if results_list:
-                        dl_choice = get_user_choice(len(results_list), "Select download quality")
-                        
-                        if dl_choice:
-                            selected_option = results_list[dl_choice - 1]
-                            print(f"\n✅ Selected: {selected_option.get('quality')} - {selected_option.get('size')}")
-                            print(f"📎 Download URL: {selected_option.get('url')}")
-                            print("\n💡 You can use yt-dlp or ffmpeg to download the .m3u8 stream.")
-                else:
-                    print("❌ Failed to get download links.")
-        else:
-            print("❌ Failed to get episode information.")
-            
-    except KeyboardInterrupt:
-        print("\n\n👋 Operation cancelled. Goodbye!")
-    except Exception as e:
-        print(f"\n❌ Error: {e}")
+    # Step 1: Search
+    query = Prompt.ask("[bold yellow]Enter anime name[/bold yellow]")
+    if not query:
         return
 
+    console.print(f"Searching for '[bold cyan]{query}[/bold cyan]'...")
+    results = api.search(query)
+    
+    if not results:
+        console.print("[bold red]No results found.[/bold red]")
+        return
+
+    # Display Results
+    table = Table(title="Search Results", show_header=True, header_style="bold magenta")
+    table.add_column("#", style="dim", width=4)
+    table.add_column("Title", style="cyan")
+    table.add_column("Release", style="green")
+    
+    for i, r in enumerate(results, 1):
+        table.add_row(str(i), r.get('title'), r.get('releaseDate'))
+    
+    console.print(table)
+    
+    choice = IntPrompt.ask("Select an anime number", choices=[str(i) for i in range(1, len(results) + 1)])
+    selected = results[choice - 1]
+    anime_id = selected.get('id')
+    anime_title = selected.get('title')
+
+    # Step 2: Get Info & Episodes
+    console.print(f"Fetching details for '[bold cyan]{anime_title}[/bold cyan]'...")
+    info = api.get_info(anime_id)
+    episodes = info.get('episodes', [])
+    
+    if not episodes:
+        console.print("[bold red]No episodes found.[/bold red]")
+        return
+
+    console.print(f"Found [bold green]{len(episodes)}[/bold green] episodes.")
+    
+    # Episode Selection
+    console.print("\nEnter episode range (e.g., '1', '1-5', or 'all'):")
+    ep_range = Prompt.ask("Range")
+    
+    to_download = []
+    if ep_range.lower() == 'all':
+        to_download = episodes
+    elif '-' in ep_range:
+        try:
+            start, end = map(int, ep_range.split('-'))
+            to_download = [e for e in episodes if start <= float(e.get('number')) <= end]
+        except ValueError:
+            console.print("[bold red]Invalid range format.[/bold red]")
+            return
+    else:
+        try:
+            num = float(ep_range)
+            to_download = [e for e in episodes if float(e.get('number')) == num]
+        except ValueError:
+            console.print("[bold red]Invalid episode number.[/bold red]")
+            return
+
+    if not to_download:
+        console.print("[bold red]Invalid selection.[/bold red]")
+        return
+
+    # Step 3: Choose Resolution
+    console.print("\nSelect Preferred Resolution:")
+    console.print("1. 1080p (Full HD)")
+    console.print("2. 720p (HD)")
+    console.print("3. 480p (SD)")
+    res_choice = Prompt.ask("Choice", choices=["1", "2", "3"], default="1")
+    res_map = {'1': '1080', '2': '720', '3': '480'}
+    preferred_res = res_map[res_choice]
+
+    # Step 4: Download Path
+    videos_dir = get_videos_dir()
+    console.print(f"Videos will be saved to: [bold cyan]{videos_dir}[/bold cyan]")
+
+    # Step 5: Download Episodes
+    for ep in to_download:
+        ep_num = ep.get('number')
+        ep_id = ep.get('id')
+        console.print(f"\n--- Processing Episode {ep_num} ---", style="bold yellow")
+        
+        links_data = api.get_links(anime_id, ep_id)
+        sources = links_data.get('sources', [])
+        
+        if not sources:
+            console.print(f"[bold red]No streaming links found for Episode {ep_num}.[/bold red]")
+            continue
+        
+        # Pick best source
+        best_source = None
+        m3u8_sources = [s for s in sources if '(m3u8)' in s.get('quality', '')]
+        if m3u8_sources:
+            best_source = m3u8_sources[0]
+        else:
+            best_source = sources[0]
+        
+        url = best_source.get('url')
+        quality = best_source.get('quality', 'default')
+        referer = best_source.get('referer')
+        
+        console.print(f"Link found! Server: [bold cyan]{quality}[/bold cyan]")
+        
+        safe_title = "".join([c for c in anime_title if c.isalnum() or c in (' ', '.', '-', '_')]).strip()
+        filename = f"{safe_title} - Episode {ep_num}.mp4"
+        filepath = os.path.join(videos_dir, filename)
+        
+        confirm = Prompt.ask(f"Download to '{filename}'?", choices=["y", "n"], default="y")
+        if confirm == 'y':
+            hook = RichProgressHook(console)
+            success = downloader.download(url, filename=filepath, progress_hook=hook, referer=referer, resolution=preferred_res)
+            if success:
+                console.print(f"[bold green]Successfully downloaded: {filename}[/bold green]")
+            else:
+                console.print(f"[bold red]Failed to download: {filename}[/bold red]")
+        else:
+            console.print("Skipping...")
+
+    console.print("\nProcess finished. Enjoy your anime!", style="bold green")
 
 if __name__ == "__main__":
-    main()
-
+    try:
+        main()
+    except KeyboardInterrupt:
+        console.print("\n[bold red]Cancelled by user.[/bold red]")
+        sys.exit(0)

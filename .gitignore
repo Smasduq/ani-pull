@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+build/
+dist/
+
+# Debian Build
+.pybuild/
+debian/ani-pull/
+debian/.debhelper/
+debian/*.log
+debian/*.substvars
+debian/files
+debian/debhelper-build-stamp
+
+# App Logs
+app.log
