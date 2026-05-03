@@ -34,7 +34,7 @@ and downloads high-quality anime episodes from Anitaku.to.
 
 %install
 %pyproject_install
-%pyproject_save_files ani_pull
+%pyproject_save_files api main
 
 %files -f %{pyproject_files}
 %doc README.md

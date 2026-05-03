@@ -46,7 +46,7 @@ jobs:
         run: |
           VERSION="1.1.0"
           mkdir -p rpmbuild/SOURCES
-          tar -czf rpmbuild/SOURCES/v${VERSION}.tar.gz --exclude=rpmbuild .
+          tar --transform "s|^|ani-pull-${VERSION}/|" -czf rpmbuild/SOURCES/v${VERSION}.tar.gz --exclude=rpmbuild .
 
       - name: Build RPM
         run: |
