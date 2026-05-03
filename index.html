@@ -24,7 +24,10 @@
             <h1>The ultimate anime downloader for <span>Linux.</span></h1>
             <p>Fast, robust, and native. Search, select, and download your favorite series in high fidelity directly
                 from your terminal.</p>
-            <a href="https://github.com/Smasduq/ani-pull/releases/latest" class="btn-primary">Download .deb</a>
+            <div style="display: flex; justify-content: center; gap: 1rem;">
+                <a href="https://github.com/Smasduq/ani-pull" target="_blank" class="btn-primary">★ Star on GitHub</a>
+                <a href="https://github.com/Smasduq/ani-pull/releases/latest" class="btn-secondary">Download .deb</a>
+            </div>
         </section>
 
         <section class="install-section" id="install">
@@ -54,10 +57,13 @@
 
                 <!-- Fedora Tab -->
                 <div id="fedora" class="tab-content">
-                    <p style="margin-bottom: 1rem;">Install using <code>dnf</code> or build the RPM spec.</p>
+                    <p style="margin-bottom: 1.5rem;">Native support for Fedora and other RPM-based distributions.</p>
+                    <div style="margin-bottom: 2rem;">
+                        <a href="https://github.com/Smasduq/ani-pull/releases/latest" class="btn-secondary" style="margin-left: 0; padding: 0.8rem 1.5rem; font-size: 0.9rem;">Download .rpm</a>
+                    </div>
                     <div class="code-block">
                         <button class="copy-btn">Copy</button>
-                        <span># Install the binary RPM</span><br>
+                        <span># Install using dnf</span><br>
                         sudo dnf install ./ani-pull-1.1.0-1.noarch.rpm
                     </div>
                 </div>
