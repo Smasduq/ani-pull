@@ -16,7 +16,6 @@ Requires:       python3-requests
 Requires:       python3-beautifulsoup4
 Requires:       yt-dlp
 Requires:       python3-rich
-Requires:       python3-cloudscraper
 Requires:       python3-tqdm
 
 %description
@@ -26,8 +25,8 @@ and downloads high-quality anime episodes from Anitaku.to.
 %prep
 %autosetup -n ani-pull-%{version}
 
-%generate_buildrequires
-%pyproject_buildrequires
+# %generate_buildrequires
+# %pyproject_buildrequires
 
 %build
 %pyproject_wheel

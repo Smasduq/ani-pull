@@ -40,7 +40,8 @@ jobs:
 
       - name: Install Build Tools
         run: |
-          dnf install -y rpm-build python3-devel python3-setuptools pyproject-rpm-macros python3-build python3-installer tar
+          dnf install -y rpm-build python3-devel python3-setuptools pyproject-rpm-macros python3-build python3-installer tar \
+                         python3-requests python3-beautifulsoup4 python3-rich python3-tqdm yt-dlp
 
       - name: Prepare Source Tarball
         run: |
