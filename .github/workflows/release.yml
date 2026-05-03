@@ -15,7 +15,7 @@ jobs:
       - name: Install Build Tools
         run: |
           sudo apt update
-          sudo apt install -y devscripts debhelper dh-python pybuild-plugin-pyproject python3-all python3-setuptools python3-build python3-installer python3-requests python3-bs4 python3-rich python3-cloudscraper python3-tqdm
+          sudo apt install -y build-essential devscripts debhelper dh-python pybuild-plugin-pyproject python3-all python3-setuptools python3-build python3-installer python3-requests python3-bs4 python3-rich python3-cloudscraper python3-tqdm
 
       - name: Build Debian Package
         run: |
