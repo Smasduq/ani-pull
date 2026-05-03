@@ -21,9 +21,9 @@
 
     <main>
         <section class="hero">
-            <h1>The ultimate anime downloader for <span>Linux.</span></h1>
-            <p>Fast, robust, and native. Search, select, and download your favorite series in high fidelity directly
-                from your terminal.</p>
+            <h1>Download your favorite anime <span>from the terminal.</span></h1>
+            <p>A fast, reliable downloader for <b>Linux, macOS, and Windows</b>. No ads, no fluff. Just high-quality
+                episodes delivered straight to your machine.</p>
             <div style="display: flex; justify-content: center; gap: 1rem;">
                 <a href="https://github.com/Smasduq/ani-pull" target="_blank" class="btn-primary">★ Star on GitHub</a>
                 <a href="https://github.com/Smasduq/ani-pull/releases/latest" class="btn-secondary">Download .deb</a>
@@ -40,7 +40,9 @@
                     <button class="tab-btn active" onclick="showTab('debian')">Debian / Ubuntu</button>
                     <button class="tab-btn" onclick="showTab('fedora')">Fedora</button>
                     <button class="tab-btn" onclick="showTab('arch')">Arch Linux</button>
-                    <button class="tab-btn" onclick="showTab('python')">Python (Pip)</button>
+                    <button class="tab-btn" onclick="showTab('macos')">macOS</button>
+                    <button class="tab-btn" onclick="showTab('windows')">Windows</button>
+                    <button class="tab-btn" onclick="showTab('python')">Other (Pip)</button>
                 </div>
 
                 <!-- Debian Tab -->
@@ -55,11 +57,24 @@
                         Bullseye, Jammy, Noble, and more.</p>
                 </div>
 
+                <!-- macOS Tab -->
+                <div id="macos" class="tab-content">
+                    <p style="margin-bottom: 1.5rem;">Install using <code>pip</code>. macOS users should also install
+                        <code>ffmpeg</code> via Homebrew.
+                    </p>
+                    <div class="code-block">
+                        <button class="copy-btn">Copy</button>
+                        brew install ffmpeg<br>
+                        pip3 install ani-pull
+                    </div>
+                </div>
+
                 <!-- Fedora Tab -->
                 <div id="fedora" class="tab-content">
                     <p style="margin-bottom: 1.5rem;">Native support for Fedora and other RPM-based distributions.</p>
                     <div style="margin-bottom: 2rem;">
-                        <a href="https://github.com/Smasduq/ani-pull/releases/latest" class="btn-secondary" style="margin-left: 0; padding: 0.8rem 1.5rem; font-size: 0.9rem;">Download .rpm</a>
+                        <a href="https://github.com/Smasduq/ani-pull/releases/latest" class="btn-secondary"
+                            style="margin-left: 0; padding: 0.8rem 1.5rem; font-size: 0.9rem;">Download .rpm</a>
                     </div>
                     <div class="code-block">
                         <button class="copy-btn">Copy</button>
@@ -79,6 +94,18 @@
                     </div>
                 </div>
 
+                <!-- Windows Tab -->
+                <div id="windows" class="tab-content">
+                    <p style="margin-bottom: 1.5rem;">Install on Windows using <code>pip</code>. You will also need <code>ffmpeg</code> installed on your system path.</p>
+                    <div class="code-block">
+                        <button class="copy-btn">Copy</button>
+                        <span># Install ffmpeg via winget</span><br>
+                        winget install ffmpeg<br><br>
+                        <span># Install ani-pull</span><br>
+                        pip install ani-pull
+                    </div>
+                </div>
+
                 <!-- Python Tab -->
                 <div id="python" class="tab-content">
                     <p style="margin-bottom: 1rem;">Install as a standard Python package.</p>
@@ -86,6 +113,22 @@
                         <button class="copy-btn">Copy</button>
                         pip install ani-pull
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section style="padding: 4rem 2rem; max-width: 1000px; margin: 0 auto; text-align: center;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">System Requirements</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                <div class="tabs-container" style="margin-top: 0; padding: 1.5rem;">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;">Python 3.8+</h3>
+                    <p style="color: var(--text-dim); font-size: 0.95rem;">Required for all platforms. Ani-pull is built
+                        on modern Python for maximum reliability.</p>
+                </div>
+                <div class="tabs-container" style="margin-top: 0; padding: 1.5rem;">
+                    <h3 style="color: var(--secondary); margin-bottom: 1rem;">FFmpeg</h3>
+                    <p style="color: var(--text-dim); font-size: 0.95rem;">Essential for merging video and audio streams
+                        into high-quality files.</p>
                 </div>
             </div>
         </section>
