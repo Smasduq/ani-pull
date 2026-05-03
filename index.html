@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ani-Pull | High Performance Anime Downloader</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="bg-glow"></div>
+
+    <header>
+        <div class="logo">ANI-PULL</div>
+        <nav class="nav-links">
+            <a href="#install">Install</a>
+            <a href="https://github.com/Smasduq/ani-pull" target="_blank">GitHub</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>The ultimate anime downloader for <span>Linux.</span></h1>
+            <p>Fast, robust, and native. Search, select, and download your favorite series in high fidelity directly
+                from your terminal.</p>
+            <a href="https://github.com/Smasduq/ani-pull/releases/latest" class="btn-primary">Download .deb</a>
+        </section>
+
+        <section class="install-section" id="install">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 1rem;">Installation</h2>
+            <p style="text-align: center; color: var(--text-dim); margin-bottom: 2rem;">Choose your platform to get
+                started</p>
+
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="showTab('debian')">Debian / Ubuntu</button>
+                    <button class="tab-btn" onclick="showTab('fedora')">Fedora</button>
+                    <button class="tab-btn" onclick="showTab('arch')">Arch Linux</button>
+                    <button class="tab-btn" onclick="showTab('python')">Python (Pip)</button>
+                </div>
+
+                <!-- Debian Tab -->
+                <div id="debian" class="tab-content active">
+                    <p style="margin-bottom: 1.5rem;">The fastest way to install on Debian or Ubuntu. This script
+                        automatically sets up the repository and installs the package.</p>
+                    <div class="code-block" style="border-color: var(--primary); box-shadow: 0 0 20px var(--glow);">
+                        <button class="copy-btn">Copy</button>
+                        <span>curl</span> -sSL https://smasduq.github.io/ani-pull/install.sh | <span>sudo bash</span>
+                    </div>
+                    <p style="margin-top: 1.5rem; color: var(--text-dim); font-size: 0.9rem;">Supports: Bookworm,
+                        Bullseye, Jammy, Noble, and more.</p>
+                </div>
+
+                <!-- Fedora Tab -->
+                <div id="fedora" class="tab-content">
+                    <p style="margin-bottom: 1rem;">Install using <code>dnf</code> or build the RPM spec.</p>
+                    <div class="code-block">
+                        <button class="copy-btn">Copy</button>
+                        <span># Install the binary RPM</span><br>
+                        sudo dnf install ./ani-pull-1.1.0-1.noarch.rpm
+                    </div>
+                </div>
+
+                <!-- Arch Tab -->
+                <div id="arch" class="tab-content">
+                    <p style="margin-bottom: 1rem;">Build from the official PKGBUILD.</p>
+                    <div class="code-block">
+                        <button class="copy-btn">Copy</button>
+                        git clone https://github.com/Smasduq/ani-pull<br>
+                        cd ani-pull/packaging/arch<br>
+                        <span>makepkg -si</span>
+                    </div>
+                </div>
+
+                <!-- Python Tab -->
+                <div id="python" class="tab-content">
+                    <p style="margin-bottom: 1rem;">Install as a standard Python package.</p>
+                    <div class="code-block">
+                        <button class="copy-btn">Copy</button>
+                        pip install ani-pull
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="logo" style="margin-bottom: 1rem;">ANI-PULL</div>
+            <p>Made with ❤️ for the anime community.</p>
+            <div class="author">By Smasduq</div>
+            <p style="margin-top: 2rem; font-size: 0.8rem; opacity: 0.5;">Licensed under MIT</p>
+        </div>
+    </footer>
+
+    <script>
+        function showTab(tabId) {
+            // Remove active class from all buttons and contents
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Add active class to selected button and content
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Simple Copy Logic
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const code = btn.parentElement.innerText.replace('Copy', '').trim();
+                navigator.clipboard.writeText(code);
+                const originalText = btn.innerText;
+                btn.innerText = 'Copied!';
+                setTimeout(() => btn.innerText = originalText, 2000);
+            });
+        });
+    </script>
+</body>
+
+</html>
