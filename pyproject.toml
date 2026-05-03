@@ -5,7 +5,7 @@ description = "Anime downloader CLI"
 authors = [
     { name = "Smasduq" }
 ]
-license = "MIT"
+license = {text = "MIT"}
 readme = "README.md"
 dependencies = [
     "requests",
