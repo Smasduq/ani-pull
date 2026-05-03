@@ -15,7 +15,8 @@ class Downloader:
         self.output_template = output_template
 
     def download(self, url: str, filename: Optional[str] = None, progress_hook: Optional[Callable] = None, 
-                 referer: Optional[str] = None, resolution: str = "1080"):
+                 referer: Optional[str] = None, resolution: str = "1080", 
+                 write_subs: bool = False, embed_subs: bool = False):
         """
         Download a video from a given URL with a specific resolution limit.
         """
@@ -32,10 +33,21 @@ class Downloader:
             'format': fmt,
             'outtmpl': filename or self.output_template,
             'quiet': True,
-            'no_warnings': True,
-            'http_headers': headers,
-            'merge_output_format': 'mp4',
+            'embedsubtitles': embed_subs,
+            'subtitleslangs': ['en.*'],
+            'no_check_certificate': True,
+            'prefer_ffmpeg': True,
         }
+        
+        # Don't use quiet: True, let it log to app.log but we'll suppress stdout in main if needed.
+        # Actually, yt-dlp's logger can be used.
+        ydl_opts['logger'] = logger
+        
+        if embed_subs:
+            ydl_opts['postprocessors'] = [{
+                'key': 'FFmpegEmbedSubtitle',
+                'already_have_subtitle': False,
+            }]
         
         if progress_hook:
             ydl_opts['progress_hooks'] = [progress_hook]
@@ -75,13 +87,25 @@ class RichProgressHook:
         if d['status'] == 'downloading':
             if self.task_id is None:
                 self.progress.start()
-                total = d.get('total_bytes') or d.get('total_bytes_estimate', 100)
+                total = d.get('total_bytes') or d.get('total_bytes_estimate') or 100
                 self.task_id = self.progress.add_task("Downloading", total=total)
             
             downloaded = d.get('downloaded_bytes', 0)
-            self.progress.update(self.task_id, completed=downloaded)
+            total = d.get('total_bytes') or d.get('total_bytes_estimate')
+            
+            if total:
+                self.progress.update(self.task_id, completed=downloaded, total=total)
+            else:
+                self.progress.update(self.task_id, completed=downloaded)
         
         elif d['status'] == 'finished':
+            # Don't stop progress here, wait for the whole process to finish
+            # or just finish the task.
             if self.task_id is not None:
-                self.progress.stop()
-                self.console.print("[bold green]Download complete. Finalizing file...[/bold green]")
+                self.progress.update(self.task_id, completed=self.progress.tasks[self.task_id].total)
+                # We'll stop in a cleanup or let the next step take over.
+        
+    def stop(self):
+        if self.task_id is not None:
+            self.progress.stop()
+            self.console.print("[bold green]Download complete. Finalizing file...[/bold green]")

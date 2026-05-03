@@ -31,6 +31,17 @@ def get_videos_dir():
         os.makedirs(videos_dir, exist_ok=True)
     return videos_dir
 
+def get_unique_path(filepath):
+    """If file exists, append (1), (2), etc. until a unique name is found."""
+    if not os.path.exists(filepath):
+        return filepath
+    
+    base, ext = os.path.splitext(filepath)
+    counter = 1
+    while os.path.exists(f"{base} ({counter}){ext}"):
+        counter += 1
+    return f"{base} ({counter}){ext}"
+
 def main():
     console.print(Panel.fit("ANIME DOWNLOADER", style="bold cyan", border_style="blue"))
     
@@ -102,20 +113,38 @@ def main():
         console.print("[bold red]Invalid selection.[/bold red]")
         return
 
-    # Step 3: Choose Resolution
-    console.print("\nSelect Preferred Resolution:")
-    console.print("1. 1080p (Full HD)")
-    console.print("2. 720p (HD)")
-    console.print("3. 480p (SD)")
-    res_choice = Prompt.ask("Choice", choices=["1", "2", "3"], default="1")
-    res_map = {'1': '1080', '2': '720', '3': '480'}
-    preferred_res = res_map[res_choice]
+    # Step 3: Get Links for First Episode to choose Server
+    first_ep = to_download[0]
+    console.print(f"\nFetching available servers for [bold cyan]Episode {first_ep.get('number')}[/bold cyan]...")
+    links_data = api.get_links(anime_id, first_ep.get('id'))
+    sources = links_data.get('sources', [])
+    
+    if not sources:
+        console.print("[bold red]No streaming links found.[/bold red]")
+        return
 
-    # Step 4: Download Path
+    # Display Sources
+    source_table = Table(title="Available Servers", show_header=True, header_style="bold magenta")
+    source_table.add_column("#", style="dim", width=4)
+    source_table.add_column("Server / Quality", style="cyan")
+    
+    for i, s in enumerate(sources, 1):
+        source_table.add_row(str(i), s.get('quality'))
+    
+    console.print(source_table)
+    
+    source_choice = IntPrompt.ask("Select a server number", choices=[str(i) for i in range(1, len(sources) + 1)])
+    preferred_server = sources[source_choice - 1].get('quality')
+
+    # Step 4: Subtitles
+    sub_choice = Prompt.ask("\nDownload & Embed Subtitles?", choices=["y", "n"], default="y")
+    enable_subs = sub_choice == 'y'
+
+    # Step 5: Download Path
     videos_dir = get_videos_dir()
     console.print(f"Videos will be saved to: [bold cyan]{videos_dir}[/bold cyan]")
 
-    # Step 5: Download Episodes
+    # Step 6: Download Episodes
     for ep in to_download:
         ep_num = ep.get('number')
         ep_id = ep.get('id')
@@ -128,32 +157,30 @@ def main():
             console.print(f"[bold red]No streaming links found for Episode {ep_num}.[/bold red]")
             continue
         
-        # Pick best source
-        best_source = None
-        m3u8_sources = [s for s in sources if '(m3u8)' in s.get('quality', '')]
-        if m3u8_sources:
-            best_source = m3u8_sources[0]
-        else:
-            best_source = sources[0]
+        # Match preferred server
+        selected_source = next((s for s in sources if s.get('quality') == preferred_server), sources[0])
         
-        url = best_source.get('url')
-        quality = best_source.get('quality', 'default')
-        referer = best_source.get('referer')
+        url = selected_source.get('url')
+        quality = selected_source.get('quality', 'default')
+        referer = selected_source.get('referer')
         
-        console.print(f"Link found! Server: [bold cyan]{quality}[/bold cyan]")
+        console.print(f"Using server: [bold cyan]{quality}[/bold cyan]")
         
         safe_title = "".join([c for c in anime_title if c.isalnum() or c in (' ', '.', '-', '_')]).strip()
         filename = f"{safe_title} - Episode {ep_num}.mp4"
         filepath = os.path.join(videos_dir, filename)
+        filepath = get_unique_path(filepath)
+        final_filename = os.path.basename(filepath)
         
-        confirm = Prompt.ask(f"Download to '{filename}'?", choices=["y", "n"], default="y")
+        confirm = Prompt.ask(f"Download to '{final_filename}'?", choices=["y", "n"], default="y")
         if confirm == 'y':
             hook = RichProgressHook(console)
-            success = downloader.download(url, filename=filepath, progress_hook=hook, referer=referer, resolution=preferred_res)
+            success = downloader.download(url, filename=filepath, progress_hook=hook, referer=referer, write_subs=enable_subs, embed_subs=enable_subs)
+            hook.stop()
             if success:
-                console.print(f"[bold green]Successfully downloaded: {filename}[/bold green]")
+                console.print(f"[bold green]Successfully downloaded: {final_filename}[/bold green]")
             else:
-                console.print(f"[bold red]Failed to download: {filename}[/bold red]")
+                console.print(f"[bold red]Failed to download: {final_filename}[/bold red]")
         else:
             console.print("Skipping...")
 
