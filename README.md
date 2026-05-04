@@ -11,26 +11,26 @@ A robust, user-friendly CLI for searching and downloading anime episodes.
 
 ## Installation
 
-### 🐧 Debian / Ubuntu
+### Debian / Ubuntu
 Download the latest `.deb` file from the [Releases](https://github.com/Smasduq/ani-pull/releases) page and run:
 ```bash
 sudo apt install ./ani-pull_*.deb
 ```
 
-### 🎩 Fedora
+### Fedora
 Download the latest `.rpm` or build from source:
 ```bash
 sudo dnf install ./ani-pull-*.rpm
 ```
 
-### 🏹 Arch Linux
+### Arch Linux
 Build using the PKGBUILD:
 ```bash
 cd packaging/arch
 makepkg -si
 ```
 
-### 🐍 Python (Standard)
+### Python (Standard)
 ```bash
 pip install .
 ```

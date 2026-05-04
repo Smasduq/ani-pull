@@ -113,22 +113,40 @@ h1 {
     margin-bottom: 3rem;
 }
 
-.btn-primary {
+.btn-primary, .btn-secondary {
     display: inline-block;
     padding: 1rem 2.5rem;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
-    text-decoration: none;
     border-radius: 50px;
     font-weight: 700;
     font-size: 1.1rem;
-    box-shadow: 0 10px 30px var(--glow);
+    text-decoration: none;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.btn-primary:hover {
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    box-shadow: 0 10px 30px var(--glow);
+}
+
+.btn-secondary {
+    background: var(--glass);
+    color: var(--text);
+    border: 1px solid var(--border);
+    margin-left: 1rem;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
     transform: translateY(-3px);
+}
+
+.btn-primary:hover {
     box-shadow: 0 15px 40px var(--glow);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
 }
 
 /* Tabs */
