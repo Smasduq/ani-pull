@@ -185,6 +185,10 @@ def main():
             console.print("Skipping...")
 
     console.print("\nProcess finished. Enjoy your anime!", style="bold green")
+    console.print(f"[bold blue]ani-pull v{__version__}[/bold blue]")
+
+
+__version__ = "1.0.0"
 
 if __name__ == "__main__":
     try:
